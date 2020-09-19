@@ -448,7 +448,7 @@ pval2e
 
 > H1: There is difference between the averaged systolic blood pressure for owners and renters, with owners have higher averaged systolic blood pressure. p^O - p^W > 0
 
-> Decision rule: Reject H0 if p-value < a, otherwise, do not reject H0.
+> Decision rule: Reject H0 if p-value < alpha, otherwise, do not reject H0.
 
 > The process of the random sampling loop is to compute simulated hypothetical samples, this randomization is performed to simulate what would have happened if the reading of averaged systolic blood pressure had been independent of participants' ownership of house (Owner or Renter).
 
@@ -503,7 +503,7 @@ R.CI2f
 robs2f <- Rdt2Sf %>%
   summarise(Diff = mean[1] - mean[2])
 
-pval2f <- sum(Diff2f >= robs2f)/R
+pval2f <- sum(Diff2f >= robs2f)/R2f
 pval2f
 ```
 
