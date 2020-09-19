@@ -394,16 +394,16 @@ Consider the R code provided in the code chunk below (and available in the R scr
 
 > The code first filter the data to exclude observations that belongs to group "Other" in the variable HomeOwn, then state the number of observations and number of random sampling that will be processed. The for each r-th element, it creates a loop of random sampling for BPSysAve with no replacement, and then it is summarised by group HomeOwn, resulted in mean of BPSysAve for Owners and Renters. The last step is calculating the difference in mean of Owners and Renters from the sampled data.
 
-> Since the difference between mean of BPSysAve for Owners and Renters is calculated, the t.test can be constructed.
+> Since the difference between mean of BPSysAve for Owners and Renters is calculated, the confidence interval and hypothesis testing can be constructed.
 
 #### Q2.e
 
 Supplement the code provided and produce a two-sided test based on the sampling distribution described in part d. Discuss the rationale for the test, carefully explain how to determine the outcome of the test, and report the corresponding “strength of evidence” that results.
 
-```{r boot-or,fig.cap = "Two-sided testing for HomeOwn"}
+```{r random-or}
 #filtering the dataframe for all values other than other in variable HomeOwn
 dt2 <- dt %>% filter(HomeOwn!="Other")
-#setting the seed for reproducible bootstrap computation
+#setting the seed for reproducible random sample computation
 set.seed(140920)
 
 #setting the sample value to the number of rows in the dataframe dt2f
@@ -432,27 +432,42 @@ RDiff = as.numeric(RDiff)
 #finding the 95% confidence intervals for the dataframe Diff2f
 R.CIq2 <- quantile(RDiff, c(0.025, 0.975))
 R.CIq2
-#calculating the CLT based testing for estimates and p-value
-test2e <- t.test(x = RDiff) %>% 
-  tidy()
-test2e
+
 ```
 
+```{r 2ep-value}
+#calculating the CLT based testing for estimates and p-value
+robs <- Rdt2S %>%
+  summarise(Diff = mean[1] - mean[2])
 
-> The p-value is 0.24 which is larger than the alpha and hence we arrive at a result that we do not reject the null hypothesis and there's no difference in the renters and owners.
+pval2e <- sum(RDiff >= robs)/R
+pval2e
+```
+
+> H0: There is no difference between the averaged systolic blood pressure for owners and renters. p^O - p^W = 0
+
+> H1: There is difference between the averaged systolic blood pressure for owners and renters, with owners have higher averaged systolic blood pressure. p^O - p^W > 0
+
+> Decision rule: Reject H0 if p-value < a, otherwise, do not reject H0.
+
+> The process of the random sampling loop is to compute simulated hypothetical samples, this randomization is performed to simulate what would have happened if the reading of averaged systolic blood pressure had been independent of participants' ownership of house (Owner or Renter).
+
+> To find the p-value, we implement the formula 
+$\tilde{p}-value$ = $\frac{number\;of\; xobs^{[r]} - xobs}{R}$,
+number of xobs[r] in this case will be the final `RDiff` result we obtained, which is the random sampled difference, on the other hand, xobs is the sample difference from the original data. Hence, we arrive that a result where p-value is 0.0002 which is less than the alpha (0.05) and hence we arrive at a result that we reject the null hypothesis and there's difference in the averaged systolic blood pressure for renters and owners in the participants, and owner tend to have higher averaged systolic blood pressure than renters.
 
 #### Q2.f
 
 If you restrict the cases to only include men aged between 35 and 44 (inclusive) the strength of evidence changes. Applying the same method as in part e., show the test results, report the “strength of evidence” for the conclusion, and discuss any apparent reasons for the difference in the results
 compared to part e.
 
-```{r boot-ga}
+```{r random-ga}
 dt2f <- dt %>% 
   #filtering the dataframe dt for males between 34-45 years of age who are renters/owners
   filter(Gender == "male",
          HomeOwn!="Other",
          Age > 34 & Age < 45)
-#setting the seed for reproducible bootstrap computation
+#setting the seed for reproducible random sample computation
 set.seed(140920)
 #setting the sample value to the number of rows in the dataframe dt2f
 n2f <- nrow(dt2f)
@@ -480,13 +495,20 @@ Diff2f = as.numeric(Diff2f)
 #finding the 95% confidence intervals for the dataframe Diff2f
 R.CI2f <- quantile(Diff2f, c(0.025, 0.975))
 R.CI2f
-#calculating the CLT based testing for estimates and p-value
-test2f <- t.test(x = Diff2f) %>% 
-  tidy()
-test2f
+
 ```
 
-> When we filter the sample into male participant aged between 35 and 44 (inclusive), we discovered that the confidence interval is widened compared to the previous result. That we are 95% confident the difference of averaged systolic blood pressure between two groups (Owner and Renter) for male participants aged between 35 and 44 is -2.7413 and 2.7577 mm Hg. On the other hand, the p-value is decreased from 0.24 to 0.21. However, the p-value still arrives at a result that we do not reject the null hypothesis and there's no difference in the renters and owners for male participants aged between 35 and 44.
+```{r 2fp-value}
+#calculating the CLT based testing for estimates and p-value
+robs2f <- Rdt2Sf %>%
+  summarise(Diff = mean[1] - mean[2])
+
+pval2f <- sum(Diff2f >= robs2f)/R
+pval2f
+```
+
+
+> When we filter the sample into male participant aged between 35 and 44 (inclusive), we discovered that the confidence interval is widened compared to the previous result. That we are 95% confident the difference of averaged systolic blood pressure between two groups (Owner and Renter) for male participants aged between 35 and 44 is -2.7413 and 2.7577 mm Hg. On the other hand, the p-value is decreased from 0.0002 to 0. Providing a stronger evidence to reject the null hypothesis, that there is difference on the averaged systolic blood pressure in the renters and owners for male participants aged between 35 and 44.
 - The reason of the difference in the result may be that the sample size has decreased about a considerable amount due to the restriction.
 
 ### References
