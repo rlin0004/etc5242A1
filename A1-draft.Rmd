@@ -1,0 +1,412 @@
+---
+title: "A1_28757599"
+author: "Ruimin Lin - 28757599"
+date: "9/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, warning = FALSE, message = FALSE, error = FALSE, tidy.opts = list(width.cutoff=60), tidy=TRUE)
+```
+
+```{r dataset}
+# The Dataset 
+options(digits = 6)
+library(tidyverse)
+library(broom)
+library(kableExtra)
+library(NHANES)
+library(gridExtra)
+dt <- NHANES %>% 
+  distinct(ID, .keep_all = TRUE) 
+
+dt <- dt  %>% 
+  filter(Age >= 18) %>% 
+  dplyr::select(Gender, Age, HomeOwn, BPSysAve, BPSys2, BPSys3)
+
+dt <- dt %>% 
+  drop_na()
+
+dt1 <- dt %>% 
+  mutate(Age=as.numeric(Age), BPSysAve=as.numeric(BPSysAve),
+         BPSys2=as.numeric(BPSys2), BPSys3=as.numeric(BPSys3))
+
+```
+
+### Question 1
+
+#### Q1.a
+Produce a single plot that displays the sample distributions of the two variables, BPSys2 and BPSys3. Explain why the plot is relevant to the comparison of the two variables. Detail the important elements of the plot in your report, and comment on any features apparent from the plot of particular interest.
+```{r}
+p1_sys2 <- dt1 %>%
+  ggplot(aes(BPSys2)) +
+  geom_histogram(aes(y = ..density..),
+                 alpha = 0.5,
+                 binwidth = 5,
+                 colour = "black", fill = "white") +
+  geom_density(alpha = 0.1, fill = "blue")
+
+p2_sys3 <- dt1 %>%
+  ggplot(aes(BPSys3)) +
+  geom_histogram(aes(y = ..density..),
+                 alpha = 0.5,
+                 binwidth = 5,
+                 colour = "black", fill = "white") +
+  geom_density(alpha = 0.1, fill = "blue")
+
+grid.arrange(p1_sys2, p2_sys3, ncol = 2)
+```
+
+> The density plot shows the systolic blood pressure readings of individuals at two consecutive time points. In case of sample distribution, histograms and density plots are best to view them. The comparison of two variables of interest is essential before doing any statistical procedure, the visualisation of variable offers an idea of how the variable of interest is distributed at a glance. In this case, we can observe that both sample distribution is positively skewed with unimodal distribution, with the same scale on x-axis (approx. 100 - 200). The peak (number of participants who had same systolic blood pressure reading) in BPSys2 originates just after 100, whereas BPSys3 peak is seen just before 125. Overall, the distributions of both variables of interest(BPSys2 and BPSys3) does not have too much difference.
+
+
+#### Q1.b
+
+Produce a plot to appropriately display the sample information regarding the distribution of the difference variable Diff = BPSys3 − BPSys2. Detail the important elements of the plot in your report, and comment on any features apparent from the plot of particular interest.
+```{r}
+dt1diff <- dt1 %>%
+  mutate(diff = BPSys3 - BPSys2)
+
+p3_diff <- dt1diff %>%
+  ggplot(aes(diff)) +
+  geom_histogram(aes(y = ..density..),
+                 alpha = 0.5,
+                 binwidth = 2,
+                 colour = "black", fill = "white") +
+  geom_density(alpha = 0.1, fill = "blue")
+
+p3_diff
+```
+
+> The density plot for the difference of BPSys2 and BPSys3 demonstrates the presence of multi-modal. From the histogram we can see that the mean of difference of BPSys2 and BPSys3 is centred around 0, however, the shape of the density plot is not behaving as a smooth bell-shaped curve.
+
+#### Q1.c
+
+Produce a selection of suitable summary statistics for each of the relevant variables from parts a. and b. Describe each statistic produced and explain its relevance.
+
+```{r}
+summarySys2 <- dt1 %>% 
+  summarise(n = n(),
+            mean = mean(BPSys2),
+            median = median(BPSys2),
+            SD = sd(BPSys2), IQR = IQR(BPSys2))
+summarySys2
+```
+```{r}
+summarySys3 <- dt1 %>% 
+  summarise(n = n(),
+            mean = mean(BPSys3),
+            median = median(BPSys3),
+            SD = sd(BPSys3), IQR = IQR(BPSys3))
+summarySys3
+```
+```{r}
+summarydiff <- dt1diff %>% 
+  summarise(n = n(),
+            mean = mean(diff),
+            median = median(diff),
+            SD = sd(diff), IQR = IQR(diff))
+
+summarydiff$n = as.double(summarydiff$n)
+summarydiff
+```
+> The summary statistic created for BPSys2 and BPSys3 have little difference, its mean and SD only have difference of 0.7280 and 0.3972 respectively, with same median. Such difference also leads to the small summary statistics presented in the summary statistic table for (BPSys3 - BPSys2), the interquartile range tend to be lower compared to the interquartile range for BPSys2 and BPSys3. On the other hand, the low standard deviation implies that the data is clustered around the mean compared to the standard deviation of BPSys2 and BPSys3, where the standard deviation of 17.75 and 17.35 indicates the data is more spread out.
+
+#### Q1.d
+
+Use a Bootstrap-based approach to produce a 95% confidence interval for the average difference in systolic blood pressure of respondents, as measured by BPSys2 and BPSys3. Report your interval and explain how it was obtained. Include a plot of the empirical Bootstrap sample density in your discussion, explain what it represents as well as how the plot relates to the interval produced.
+
+```{r bootstrapCI}
+set.seed(140920)
+
+n.q1 <- summarydiff$n
+
+B <- 10000
+
+xbar_boot <- rep(NA,B)
+
+for(i in 1:B){
+  dtdiff <- sample(dt1diff$diff, size=n.q1, replace=TRUE)
+  xbar_boot[i] <- mean(dtdiff)
+}
+
+boot.CIq1 <- quantile(xbar_boot, c(0.025, 0.975))
+boot.CIq1
+```
+
+```{r}
+set.seed(140920)
+
+bootplot.f<- function(stat.boot, bins=50){
+  
+  df <- tibble(stat = stat.boot)
+  CI <- round(quantile(stat.boot, c(0.025, 0.975)),2)
+  
+  p <- df %>% ggplot(aes(x=stat, y=..density..)) +  
+    geom_histogram(bins=bins, colour="black", fill="white", alpha=0.2) + 
+    geom_density(fill="blue", colour="blue", alpha=0.2) +
+    geom_vline(xintercept = CI, colour = "blue", linetype=3) +
+    theme_bw()
+  
+  p
+}
+
+mu.true <- summarydiff$mean
+sig.true <- summarydiff$SD
+x <- rnorm(n=n.q1, mean=mu.true, sd=sig.true)
+
+p_xbarboot <- bootplot.f(xbar_boot, bins=100) 
+
+len <- (max(xbar_boot) - min(xbar_boot))/3
+xxmax <- (max(xbar_boot) + sqrt(n.q1)*len)
+xxmin <- (min(xbar_boot) - sqrt(n.q1)*len)
+
+p_xbarboot <- p_xbarboot + 
+  annotate("text",label=round(boot.CIq1[1],2), x=(boot.CIq1[1]-0.5),
+           y=0.5,colour="blue") + 
+  annotate("text",label=round(boot.CIq1[2],2), x=(boot.CIq1[2]+0.5),
+           y=0.5,colour="blue") +
+  geom_vline(xintercept=mu.true, colour="red") 
+
+p4boot <- p_xbarboot + xlab(expression(bar(x))) 
+p4boot <- p4boot + ggtitle(expression(paste("Bootstrap-based approximate sampling distribution of ", bar(X))),"n=4415 and B=10000") 
+
+p4boot
+
+
+```
+
+explain what it represents as well as how the plot relates to the interval produced.
+
+> We created a loop that generates 10,000 bootstrap samples from difference data we computed using BPSys3-BPSys2, and hence we compute the 95% bootstrap confidence interval from the sample.The 95% bootstrap confidence interval is -0.8847 and -0.5708, indicating that we are 95% confident that the difference between third reading and second reading of systolic blood pressure is between -0.8847 and  -0.5708 mm Hg.
+
+> The empirical Bootstrap sample density plot represents the result of 10,000 replicated Bootstrap samples by re-sampling observed values with replacement. The bootstrap sample eliminates the multimodal issue occurred previously, showing a smoother density curve. The plot also demonstrated the 95% bootstrap sample interval by a pair of blue dotted lines with corresponding annotation. The red vertical line indicates $\bar{x}$ of original sample, and blue vertical line indicates the bootstraped sampled  $\bar{x}$.
+
+#### Q1.e
+
+Use a CLT-based approach to produce a 95% confidence interval for the average difference in systolic blood pressure measurements, corresponding to part d. Report this alternative interval, and compare it to the one obtained using the Bootstrap method in part d. Explain the relative benefits of each approach used to produce the competing confidence intervals.
+
+```{r CLT-CI}
+
+ttest.out <- t.test(x = dt1diff$diff) %>% 
+  tidy()
+CLT.CIq1 <- c(ttest.out$conf.low, ttest.out$conf.high) 
+CLT.CIq1
+```
+
+
+> The CLT-based 95% confidence interval produced the result that we are 95% confident the difference between third and second reading of systolic blood pressure is between -0.8865 and  -0.5695 mm Hg. Comparing the result with bootstrap sample confidence interval we find out that there's little difference between 2 approach (difference of 0.0018 and 0.0013 respectively). 
+CLT states that the sampling distribution will be approximately normally distributed if the sample size is large enough (n > 30), in this case our sample size is 4415 which fulfills the requirement. CLT is a theoretical approach, where, if we can determine that the sample size is >30, we will assume the sample distribution is normal. 
+On the other hand, bootstrap sampling is the process of replicate “hypothetical” data sets by re-sampling observed values with replacement provides, that the bootstrap approach takes the repeated sample into practice and provides the sample distribution for repeated samples, and therefore, confidence interval can be calculated even with unknown sampling distributions.
+
+#### Q1.f
+
+Explain why the measures BPSys2 and BPSys3 are not independent and why it is important to take the dependence in to account. What would be the result for each of parts d. and e. if it were to be assumed that the two populations (for the two measurements) were independent?
+
+> For question 1, we are looking at the difference between BPSys3 and BPSys2, the third and second reading of systolic blood pressure, that compares the different variables from same data set. In other words, the readings of systolic blood pressure is on a same individual that takes the examination, therefore the second reading of systolic blood pressure (BPSys2) has a natural correspondence with the third reading of systolic blood pressure (BPSys3). And therefore, measures of BPSys2 and BPSys3 are considered dependent, and paired. It is important to take into account the dependence as we are looking for the difference of two readings on each individuals.
+The confidence interval for two approach may result in larger difference if we assumed that the two populations were independent, which means that the measure of BPSys2 is not correspond to the measure of BPSys3 (e.g. Records the measure of Mark's second reading and Emily's third reading), and the result will be biased and not reliable.
+
+### Question 2
+
+#### Q2.a
+
+Produce a single plot that displays the sample distribution of the BPSysAve variable, for each of the two HomeOwn groups of interest, i.e. the “Owners” and the “Renters”. Detail the important elements of the plot in your report, and comment if anything seems of particular interest. Explain the steps undertaken to produce the plot.
+
+```{r}
+p4dist <- dt1 %>%
+  dplyr::filter(HomeOwn != "Other") %>%
+  ggplot(aes(BPSysAve, fill = HomeOwn)) +
+  geom_density(alpha = 0.5)
+
+p4dist
+
+```
+Detail the important elements of the plot in your report, and comment if anything seems of particular interest. Explain the steps undertaken to produce the plot.
+
+> From the density plot we observed that the density for the renters are higher than the density of owners. Both sample distributions are positively skewed, and the rent sample distribution is skewer than the owned. The interest of the plot is to examine the difference of combined systolic blood pressure reading based on the housing status of each participant.
+
+> The variable HomeOwn, consists of 3 groups, Own, Rent and Other, since we are only interested in owners and renters, the `other` group should be eliminated first using `dplyr::filter`. Therefore, the sample distribution of BPSysAve is plotted and differentiated using `fill = HomeOwn`, and the distribution of BPSysAve for two HomeOwn groups is produced.
+
+#### Q2.b
+
+Produce a selection of summary statistics for BPSysAve, for each of the two HomeOwn groups of interest. Comment on anything interesting you find in these summaries.
+```{r}
+summaryown <- dt1 %>% 
+  dplyr::filter(HomeOwn == "Own") %>%
+  summarise(nO = n(),
+            meanO = mean(BPSysAve),
+            medianO = median(BPSysAve),
+            SDO = sd(BPSysAve), IQRO = IQR(BPSysAve))
+
+summaryown %>%
+  kable() %>%
+  kable_styling()
+```
+
+```{r}
+summaryrent <- dt1 %>% 
+  dplyr::filter(HomeOwn == "Rent") %>%
+  summarise(nR = n(),
+            meanR = mean(BPSysAve),
+            medianR = median(BPSysAve),
+            SDR = sd(BPSysAve), IQRR = IQR(BPSysAve))
+
+summaryrent %>%
+  kable() %>%
+  kable_styling()
+```
+
+> The summary statistic produced indicates that the sample size of Owner are far more than the sample size of Renters, but on the density plot produced previously, Renter has higher density than Owners. Another interest statistic to notify is that owners tends to have higher mean/median systolic blood pressure than renters.
+
+#### Q2.c
+
+Estimate the average difference in BPSysAve for “Owners” relative to “Renters”, and using a CLT-based approach, report a 95% confidence interval for this difference and report on the corresponding outcome of the formal two-sided hypothesis test. In your report, detail the form of the null and alternative hypotheses, and explain how you reached the conclusion of the test.
+
+```{r}
+dtOwn <- dt1 %>%
+  filter(HomeOwn == "Own") %>%
+  pull(BPSysAve)
+
+dtOwn <- as.numeric(dtOwn)
+
+dtRent <- dt1 %>%
+  filter(HomeOwn == "Rent") %>%
+  pull(BPSysAve)
+
+dtRent <- as.numeric(dtRent)
+
+ttestq2 <- t.test(x = dtOwn, y = dtRent) %>%
+  tidy()
+ttestq2
+```
+
+
+> We are 95% confident that the difference of averaged systolic blood pressure for Owners and Renters are between 2.9538 and 5.0434 mm Hg.
+
+> H0: There is no difference in average systolic blood pressure reading for Owners and Renters. $\mu diff = 0$.
+  
+> H1: There is a difference in average systolic blood pressure reading for Owners and Renters. $\mu diff \neq 0$.
+
+> Rejection rule: Reject H0 if p-value < 0.05.
+
+> Interpretation: We reject the null hupothesis(H0) since the p-value of 0.00000000000007911 is far less than 0.05. That is, we have found convincing evidence that the averaged systolic blood pressure for Owners and Renters are different.
+
+> Alternatively, we can also interpret as we found convincing evidence that Owners have higher averaged systolic blood pressure than Renters.
+
+#### Q2.d
+
+Consider the R code provided in the code chunk below (and available in the R script file named A1.R, noted in the Introduction). Explain what the code does, and how it is used to test the relevant hypotheses detailed in part c.
+
+```{r explaincode}
+# Code chunk for Q2 part d.
+
+#dt2 <- dt %>% 
+#  filter(HomeOwn!="Other")
+#n # student to add
+#R # student to add
+
+# student to add
+# student to add
+
+#Rdt2 <- dt2
+
+#for (r in 1:R){
+#  Rdt2 <- Rdt2 %>% 
+#    mutate(BPSysAve=sample(dt2$BPSysAve, n, replace=FALSE))
+#  Rdt2S <- Rdt2 %>% 
+#    group_by(HomeOwn) %>% 
+#    summarise(mean=mean(BPSysAve)) 
+#  RDiff[r] <- Rdt2S %>% 
+#    summarise(Diff=mean[1]-mean[2]) 
+#}
+
+# student to add additional lines
+```
+
+> The code first filter the data to exclude observations that belongs to group "Other" in the variable HomeOwn, then state the number of observations and number of random sampling that will be processed. The for each r-th element, it creates a loop of random sampling for BPSysAve with no replacement, and then it is summarised by group HomeOwn, resulted in mean of BPSysAve for Owners and Renters. The last step is calculating the difference in mean of Owners and Renters from the sampled data.
+
+> Since the difference between mean of BPSysAve for Owners and Renters is cahlculated, the t.test can be constructed.
+
+#### Q2.e
+
+Supplement the code provided and produce a two-sided test based on the sampling distribution described in part d. Discuss the rationale for the test, carefully explain how to determine the outcome of the test, and report the corresponding “strength of evidence” that results.
+
+```{r eval = FALSE}
+
+dt2 <- dt %>% filter(HomeOwn!="Other")
+
+set.seed(140920)
+n <- nrow(dt2)
+R <- 5000
+
+RDiff <- rep(NA,R)
+
+Rdt2 <- dt2
+
+for (r in 1:R){
+  Rdt2 <- Rdt2 %>% 
+    mutate(BPSysAve=sample(dt2$BPSysAve, n, replace=FALSE))
+  Rdt2S <- Rdt2 %>% 
+    group_by(HomeOwn) %>% 
+    summarise(mean=mean(BPSysAve)) 
+  RDiff[r] <- Rdt2S %>% 
+    summarise(Diff=mean[1]-mean[2]) 
+}
+
+RDiff = as.numeric(RDiff)
+
+R.CIq2 <- quantile(RDiff, c(0.025, 0.975))
+R.CIq2
+
+test2e <- t.test(x = RDiff) %>% 
+  tidy()
+test2e
+```
+
+Supplement the code provided and produce a two-sided test based on the sampling distribution described in part d. Discuss the rationale for the test, carefully explain how to determine the outcome of the test, and report the corresponding “strength of evidence” that results.
+
+> The p-value is 0.24 which is larger than the /alpha and hence we arrives at a result that we do not reject the null hypothesis and there's no difference in the renters and owners.
+
+#### Q2.f
+
+If you restrict the cases to only include men aged between 35 and 44 (inclusive) the strength of evidence changes. Applying the same method as in part e., show the test results, report the “strength of evidence” for the conclusion, and discuss any apparent reasons for the difference in the results
+compared to part e.
+
+```{r}
+dt2f <- dt %>% 
+  filter(Gender == "male",
+         HomeOwn!="Other",
+         Age > 34 & Age < 45)
+
+set.seed(140920)
+
+n2f <- nrow(dt2f)
+R2f <- 5000
+
+Diff2f <- rep(NA,R2f)
+
+Rdt2f <- dt2f
+
+for (r in 1:R2f){
+  Rdt2f <- Rdt2f %>% 
+    mutate(BPSysAve=sample(dt2f$BPSysAve, n2f, replace=FALSE))
+  Rdt2Sf <- Rdt2f %>% 
+    group_by(HomeOwn) %>% 
+    summarise(mean=mean(BPSysAve),.groups = 'drop') 
+  Diff2f[r] <- Rdt2Sf %>% 
+    summarise(Diff=mean[1]-mean[2]) 
+}
+
+Diff2f = as.numeric(Diff2f)
+
+R.CI2f <- quantile(Diff2f, c(0.025, 0.975))
+R.CI2f
+
+test2f <- t.test(x = Diff2f) %>% 
+  tidy()
+test2f
+```
+
+> When we filter the sample into male participant aged between 35 and 44 (inclusive), we discovered that the confidence interval is widened compared to the previous result. That we are 95% confident the difference of averaged systolic blood pressure between two groups (Owner and Renter) for male participants aged between 35 and 44 is -2.7413 and 2.7577 mm Hg. On the other hand, the p-value is decreased from 0.24 to 0.21. However, the p-value still arrives at a result that we do not reject the null hypothesis and there's no difference in the renters and owners for male participants aged between 35 and 44.
+- The reason of the difference in the result may be that the sample size has decreased about a considerable amount due to the restriction.
+
