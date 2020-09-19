@@ -14,7 +14,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval=TRUE, warning = FALSE, message = FALSE, error = FALSE, tidy.opts = list(width.cutoff=60), tidy=TRUE)
 ```
 
-```{r dataset}
+```{r dataset,echo=FALSE}
 # loading in the libraries needed for programming
 # Options(digits) helps us controls the number of significant digits to print when printing numeric values.
 options(digits = 6)
@@ -59,7 +59,7 @@ p1_sys2 <- dt1 %>%
                  binwidth = 5,
                  colour = "black", fill = "white") +
   #adding the density plot to the histogram for the same variable BPSys2 with transparency(alpha) and color
-  geom_density(alpha = 0.1, fill = "blue")
+  geom_density(alpha = 0.1, fill = "blue") + ggtitle("Distribution of BPSys2")
 
 p2_sys3 <- dt1 %>%
   #plotting a graph with the second variable BPSys3 from the dataframe dt1
@@ -69,9 +69,10 @@ p2_sys3 <- dt1 %>%
                  alpha = 0.5,
                  binwidth = 5,
                  colour = "black", fill = "white") +
-  geom_density(alpha = 0.1, fill = "blue")
+  geom_density(alpha = 0.1, fill = "blue") +
+  ggtitle("Distribution of BPSys3")
 #adding the density plot to the histogram for the same variable BPSys3 with transparency(alpha) and color
-grid.arrange(p1_sys2, p2_sys3, ncol = 2)
+grid.arrange(p1_sys2, p2_sys3, ncol = 2) 
 ```
 
 > The density plot shows the systolic blood pressure readings of individuals at two consecutive time points. In case of sample distribution, histograms and density plots are best to view them. The comparison of two variables of interest is essential before doing any statistical procedure, the visualisation of variable offers an idea of how the variable of interest is distributed at a glance. In this case, we can observe that both sample distribution is positively skewed with unimodal distribution, with the same scale on x-axis (approx. 100 - 200). The peak (number of participants who had same systolic blood pressure reading) in BPSys2 originates just after 100, whereas BPSys3 peak is seen just before 125. Overall, the distributions of both variables of interest(BPSys2 and BPSys3) does not have too much difference.
@@ -95,7 +96,7 @@ p3_diff <- dt1diff %>%
                  colour = "black", fill = "white") +
   #adding a density plot for the same plot with transparency of 0.1 to view both the geoms
   geom_density(alpha = 0.1, fill = "blue") +
-  xlab("Diff (BPSys3-BPSys2)")
+  xlab("Diff (BPSys3-BPSys2)") + ggtitle("Distrubution of difference variable")
 
 #displaying the graph obtained 
 p3_diff
@@ -225,7 +226,7 @@ p4boot
 
 Eplain what it represents as well as how the plot relates to the interval produced.
 
-> We created a loop that generates 10,000 bootstrap samples from difference data we computed using BPSys3-BPSys2, and hence we compute the 95% bootstrap confidence interval from the sample.The 95% bootstrap confidence interval is -0.8847 and -0.5708, indicating that we are 95% confident that the difference between third reading and second reading of systolic blood pressure is between -0.8847 and  -0.5708 mm Hg.
+> We created a loop that generates 10,000 bootstrap samples from difference data we computed using BPSys3-BPSys2, and hence we compute the 95% bootstrap confidence interval from the sample.The 95% bootstrap confidence interval is -0.8847 and -0.5708,indicating that we are 95% confident that the difference between third reading and second reading of systolic blood pressure is between -0.8847 and  -0.5708 mm Hg.
 
 > The empirical Bootstrap sample density plot represents the result of 10,000 replicated Bootstrap samples by re-sampling observed values with replacement. The bootstrap sample eliminates the multimodal issue occurred previously, showing a smoother density curve. The plot also demonstrated the 95% bootstrap sample interval by a pair of blue dotted lines with corresponding annotation. The red vertical line indicates $\bar{x}$ of original sample, and blue vertical line indicates the bootstraped sampled  $\bar{x}$.
 
@@ -261,14 +262,14 @@ The confidence interval for two approach may result in larger difference if we a
 
 Produce a single plot that displays the sample distribution of the BPSysAve variable, for each of the two HomeOwn groups of interest, i.e. the “Owners” and the “Renters”. Detail the important elements of the plot in your report, and comment if anything seems of particular interest. Explain the steps undertaken to produce the plot.
 
-```{r homeown,fig.cap="Distribution of BPSysAve for HomeOwn(Own/Rent"}
+```{r homeown,fig.cap="Distribution of BPSysAve for HomeOwn(Own/Rent)"}
 p4dist <- dt1 %>%
   #filtering out the other value from the variable HomeOwn in the dataframe dt1
   dplyr::filter(HomeOwn != "Other") %>%
   #plotting a graph to depict the distribution of Blood pressure amongst the renters and owners
   ggplot(aes(BPSysAve, fill = HomeOwn)) +
   #adding geom_density layer to the plot coordinates
-  geom_density(alpha = 0.5)
+  geom_density(alpha = 0.5) + ggtitle("Distribution of BPSysAve for HomeOwn(Own/Rent)")
 #displaying the plot
 p4dist
 
@@ -437,9 +438,8 @@ test2e <- t.test(x = RDiff) %>%
 test2e
 ```
 
-Supplement the code provided and produce a two-sided test based on the sampling distribution described in part d. Discuss the rationale for the test, carefully explain how to determine the outcome of the test, and report the corresponding “strength of evidence” that results.
 
-> The p-value is 0.24 which is larger than the /alpha and hence we arrives at a result that we do not reject the null hypothesis and there's no difference in the renters and owners.
+> The p-value is 0.24 which is larger than the alpha and hence we arrive at a result that we do not reject the null hypothesis and there's no difference in the renters and owners.
 
 #### Q2.f
 
