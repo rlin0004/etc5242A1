@@ -421,7 +421,7 @@ Difference in distribution of BPSys2 and BPSys3
 </p>
 </div>
 <blockquote>
-<p>The density plot shows the systolic blood pressure readings of individuals at two consecutive time points. In case of sample distribution, histograms and density plots are best to view them. The comparison of two variables of interest is essential before doing any statistical procedure, the visualisation of variable offers an idea of how the variable of interest is distributed at a glance. In this case, we can observe that both sample distribution is positively skewed with unimodal distribution, with the same scale on x-axis (approx. 100 - 200). The peak (number of participants who had same systolic blood pressure reading) in BPSys2 originates just after 100, whereas BPSys3 peak is seen just before 125. Overall, the distributions of both variables of interest(BPSys2 and BPSys3) does not have too much difference.</p>
+<p>The density plot shows the systolic blood pressure readings of individuals at two consecutive time points. In case of sample distribution, histograms and density plots are best to view them. The comparison of two variables of interest is essential before doing any statistical procedure. The visualisation of both variables gives us an idea about how the variable of interest is distributed at a glance. In this case, we can observe that both sample distributions are positively skewed with unimodal distribution, with the same scale on x-axis (approx. 100 - 200). The peak (number of participants who had same systolic blood pressure reading) in BPSys2 originates just after 100, whereas BPSys3 peak is seen just before 125. Overall, the distributions of both variables of interest(BPSys2 and BPSys3) does not have too much difference.</p>
 </blockquote>
 </div>
 <div id="q1.b" class="section level4">
@@ -495,7 +495,7 @@ summarydiff</code></pre>
 ##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1  4415 -0.728      0  5.37     6</code></pre>
 <blockquote>
-<p>The summary statistic created for BPSys2 and BPSys3 have little difference, its mean and SD only have difference of 0.7280 and 0.3972 respectively, with same median. Such difference also leads to the small summary statistics presented in the summary statistic table for (BPSys3 - BPSys2), the interquartile range tend to be lower compared to the interquartile range for BPSys2 and BPSys3. On the other hand, the low standard deviation implies that the data is clustered around the mean compared to the standard deviation of BPSys2 and BPSys3, where the standard deviation of 17.75 and 17.35 indicates the data is more spread out.</p>
+<p>The summary statistic created for BPSys2 and BPSys3 have little difference, its mean and SD only have difference of 0.7280 and 0.3972 respectively, with same median. Such difference also leads to the small summary statistics presented in the summary statistic table for (BPSys3 - BPSys2), the interquartile range tends to be lower compared to the interquartile range for BPSys2 and BPSys3. On the other hand, the low standard deviation implies that the data is clustered around the mean compared to the standard deviation of BPSys2 and BPSys3, where the standard deviations of 17.75 and 17.35 indicate that the data is more spread out.</p>
 </blockquote>
 </div>
 <div id="q1.d" class="section level4">
@@ -584,7 +584,7 @@ Bootstrap-based approximate sampling distribution of X bar
 <p>We created a loop that generates 10,000 bootstrap samples from difference data we computed using BPSys3-BPSys2, and hence we compute the 95% bootstrap confidence interval from the sample.The 95% bootstrap confidence interval is -0.8847 and -0.5708,indicating that we are 95% confident that the difference between third reading and second reading of systolic blood pressure is between -0.8847 and -0.5708 mm Hg.</p>
 </blockquote>
 <blockquote>
-<p>The empirical Bootstrap sample density plot represents the result of 10,000 replicated Bootstrap samples by re-sampling observed values with replacement. The bootstrap sample eliminates the multimodal issue occurred previously, showing a smoother density curve. The plot also demonstrated the 95% bootstrap sample interval by a pair of blue dotted lines with corresponding annotation. The red vertical line indicates <span class="math inline">\(\bar{x}\)</span> of original sample, and blue vertical line indicates the bootstraped sampled <span class="math inline">\(\bar{x}\)</span>.</p>
+<p>The empirical Bootstrap sample density plot represents the result of 10,000 replicated Bootstrap samples by re-sampling observed values with replacement. The bootstrap sample eliminates the multimodal issue occurred previously, showing a smoother density curve. The plot also demonstrated the 95% bootstrap sample interval by a pair of blue dotted lines with corresponding annotation. The red vertical line indicates <span class="math inline">\(\bar{x}\)</span> of original sample, and blue vertical line indicates the bootstrapped sampled <span class="math inline">\(\bar{x}\)</span>.</p>
 </blockquote>
 </div>
 <div id="q1.e" class="section level4">
@@ -599,14 +599,14 @@ CLT.CIq1 &lt;- c(ttest.out$conf.low, ttest.out$conf.high)
 CLT.CIq1</code></pre>
 <pre><code>## [1] -0.886483 -0.569463</code></pre>
 <blockquote>
-<p>The CLT-based 95% confidence interval produced the result that we are 95% confident the difference between third and second reading of systolic blood pressure is between -0.8865 and -0.5695 mm Hg. Comparing the result with bootstrap sample confidence interval we find out that there’s little difference between 2 approach (difference of 0.0018 and 0.0013 respectively). CLT states that the sampling distribution will be approximately normally distributed if the sample size is large enough (n &gt; 30), in this case our sample size is 4415 which fulfills the requirement. CLT is a theoretical approach, where, if we can determine that the sample size is &gt;30, we will assume the sample distribution is normal. On the other hand, bootstrap sampling is the process of replicate “hypothetical” data sets by re-sampling observed values with replacement provides, that the bootstrap approach takes the repeated sample into practice and provides the sample distribution for repeated samples, and therefore, confidence interval can be calculated even with unknown sampling distributions.</p>
+<p>The CLT-based 95% confidence interval produced the result that we are 95% confident the difference between third and second reading of systolic blood pressure is between -0.8865 and -0.5695 mm Hg. Comparing the result with bootstrap sample confidence interval we find out that there’s little difference between these 2 approaches (difference of 0.0018 and 0.0013 respectively). CLT states that the sampling distribution will be approximately normally distributed if the sample size is large enough (n &gt; 30), in this case our sample size is 4415 which fulfills the requirement. CLT is a theoretical approach, where, if we can determine that the sample size is &gt;30, we will assume the sample distribution is normal. On the other hand, bootstrap sampling is the process of replicating “hypothetical” data sets by re-sampling observed values with replacement, providing that the bootstrap approach takes the repeated sample into practice and provides the sample distribution for repeated samples, and therefore, confidence interval can be calculated even with unknown sampling distributions.</p>
 </blockquote>
 </div>
 <div id="q1.f" class="section level4">
 <h4>Q1.f</h4>
 <p>Explain why the measures BPSys2 and BPSys3 are not independent and why it is important to take the dependence in to account. What would be the result for each of parts d. and e. if it were to be assumed that the two populations (for the two measurements) were independent?</p>
 <blockquote>
-<p>For question 1, we are looking at the difference between BPSys3 and BPSys2, the third and second reading of systolic blood pressure, that compares the different variables from same data set. In other words, the readings of systolic blood pressure is on a same individual that takes the examination, therefore the second reading of systolic blood pressure (BPSys2) has a natural correspondence with the third reading of systolic blood pressure (BPSys3). And therefore, measures of BPSys2 and BPSys3 are considered dependent, and paired. It is important to take into account the dependence as we are looking for the difference of two readings on each individuals. The confidence interval for two approach may result in larger difference if we assumed that the two populations were independent, which means that the measure of BPSys2 is not correspond to the measure of BPSys3 (e.g. Records the measure of Mark’s second reading and Emily’s third reading), and the result will be biased and not reliable.</p>
+<p>For question 1, we are looking at the difference between BPSys3 and BPSys2, the third and second reading of systolic blood pressure, that compares the different variables from same data set. In other words, the readings of systolic blood pressure is for the same individual that takes the examination, therefore the second reading of systolic blood pressure (BPSys2) has a natural correspondence with the third reading of systolic blood pressure (BPSys3). And therefore, measures of BPSys2 and BPSys3 are considered dependent, and paired. It is important to take into account the dependence as we are looking for the difference of two readings on each individuals. The confidence interval for these two approaches may result in larger difference if we assumed that the two populations were independent, which means that the measure of BPSys2 does not correspond to the measure of BPSys3 (e.g. Records the measure of Mark’s second reading and Emily’s third reading), and the result will be biased and not reliable.</p>
 </blockquote>
 </div>
 </div>
@@ -632,7 +632,7 @@ Distribution of BPSysAve for HomeOwn(Own/Rent)
 </div>
 <p>Detail the important elements of the plot in your report, and comment if anything seems of particular interest. Explain the steps undertaken to produce the plot.</p>
 <blockquote>
-<p>From the density plot we observed that the density for the renters are higher than the density of owners. Both sample distributions are positively skewed, and the rent sample distribution is skewer than the owned. The interest of the plot is to examine the difference of combined systolic blood pressure reading based on the housing status of each participant.</p>
+<p>From the density plot we observed that the density for the renters are higher than the density of owners. Both sample distributions are positively skewed, and the renters sample distribution is more skewed than the owners. The interest of the plot is to examine the difference of combined systolic blood pressure reading based on the housing status of each participant.</p>
 </blockquote>
 <blockquote>
 <p>The variable HomeOwn, consists of 3 groups, Own, Rent and Other, since we are only interested in owners and renters, the <code>other</code> group should be eliminated first using <code>dplyr::filter</code>. Therefore, the sample distribution of BPSysAve is plotted and differentiated using <code>fill = HomeOwn</code>, and the distribution of BPSysAve for two HomeOwn groups is produced.</p>
@@ -750,7 +750,7 @@ IQRR
 </tbody>
 </table>
 <blockquote>
-<p>The summary statistic produced indicates that the sample size of Owner are far more than the sample size of Renters, but on the density plot produced previously, Renter has higher density than Owners. Another interest statistic to notify is that owners tends to have higher mean/median systolic blood pressure than renters.</p>
+<p>The summary statistic produced indicates that the sample size of Owner are far more than the sample size of Renters, but on the density plot produced previously, Renter has higher density than Owners. Another interesting statistic to notify is that owners tends to have higher mean/median systolic blood pressure than renters.</p>
 </blockquote>
 </div>
 <div id="q2.c" class="section level4">
@@ -785,7 +785,7 @@ ttestq2</code></pre>
 ## 1     4.00      122.      118.      7.50 7.91e-14     3340.     2.95      5.04
 ## # ... with 2 more variables: method &lt;chr&gt;, alternative &lt;chr&gt;</code></pre>
 <blockquote>
-<p>We are 95% confident that the difference of averaged systolic blood pressure for Owners and Renters are between 2.9538 and 5.0434 mm Hg.</p>
+<p>We are 95% confident that the difference of average systolic blood pressure for Owners and Renters are between 2.9538 and 5.0434 mm Hg.</p>
 </blockquote>
 <blockquote>
 <p>H0: There is no difference in average systolic blood pressure reading for Owners and Renters. <span class="math inline">\(\mu diff = 0\)</span>.</p>
@@ -797,10 +797,10 @@ ttestq2</code></pre>
 <p>Rejection rule: Reject H0 if p-value &lt; 0.05.</p>
 </blockquote>
 <blockquote>
-<p>Interpretation: We reject the null hupothesis(H0) since the p-value of 0.00000000000007911 is far less than 0.05. That is, we have found convincing evidence that the averaged systolic blood pressure for Owners and Renters are different.</p>
+<p>Interpretation: We reject the null hupothesis(H0) since the p-value of 0.00000000000007911 is far less than 0.05. That is, we have found convincing evidence that the average systolic blood pressure for Owners and Renters are different.</p>
 </blockquote>
 <blockquote>
-<p>Alternatively, we can also interpret as we found convincing evidence that Owners have higher averaged systolic blood pressure than Renters.</p>
+<p>Alternatively, we can also interpret, as we found convincing evidence, that Owners have higher average systolic blood pressure than Renters.</p>
 </blockquote>
 </div>
 <div id="q2.d" class="section level4">
@@ -872,7 +872,7 @@ R.CIq2 &lt;- quantile(RDiff, c(0.025, 0.975))
 R.CIq2</code></pre>
 <pre><code>##     2.5%    97.5% 
 ## -1.10402  1.07295</code></pre>
-<pre class="r"><code>#calculating the CLT based testing for estimates and p-value
+<pre class="r"><code>#calculating p-value
 robs &lt;- Rdt2S %&gt;%
   summarise(Diff = mean[1] - mean[2])
 
@@ -880,19 +880,19 @@ pval2e &lt;- sum(RDiff &gt;= robs)/R
 pval2e</code></pre>
 <pre><code>## [1] 2e-04</code></pre>
 <blockquote>
-<p>H0: There is no difference between the averaged systolic blood pressure for owners and renters. p^O - p^W = 0</p>
+<p>H0: There is no difference between the average systolic blood pressure for owners and renters. p^O - p^W = 0</p>
 </blockquote>
 <blockquote>
-<p>H1: There is difference between the averaged systolic blood pressure for owners and renters, with owners have higher averaged systolic blood pressure. p^O - p^W &gt; 0</p>
+<p>H1: There is a difference between the average systolic blood pressure for owners and renters, with owners having higher averaged systolic blood pressure. p^O - p^W &gt; 0</p>
 </blockquote>
 <blockquote>
 <p>Decision rule: Reject H0 if p-value &lt; alpha, otherwise, do not reject H0.</p>
 </blockquote>
 <blockquote>
-<p>The process of the random sampling loop is to compute simulated hypothetical samples, this randomization is performed to simulate what would have happened if the reading of averaged systolic blood pressure had been independent of participants’ ownership of house (Owner or Renter).</p>
+<p>The process of the random sampling loop is to compute simulated hypothetical samples. This randomization is performed to simulate what would have happened if the reading of average systolic blood pressure had been independent of participants’ ownership of house (Owner or Renter).</p>
 </blockquote>
 <blockquote>
-<p>To find the p-value, we implement the formula <span class="math inline">\(\tilde{p}-value\)</span> = <span class="math inline">\(\frac{number\;of\; xobs^{[r]} - xobs}{R}\)</span>, number of xobs[r] in this case will be the final <code>RDiff</code> result we obtained, which is the random sampled difference, on the other hand, xobs is the sample difference from the original data. Hence, we arrive that a result where p-value is 0.0002 which is less than the alpha (0.05) and hence we arrive at a result that we reject the null hypothesis and there’s difference in the averaged systolic blood pressure for renters and owners in the participants, and owner tend to have higher averaged systolic blood pressure than renters.</p>
+<p>To find the p-value, we implement the formula <span class="math inline">\(\tilde{p}-value\)</span> = <span class="math inline">\(\frac{number\;of\; xobs^{[r]} - xobs}{R}\)</span>, number of xobs[r] in this case will be the final <code>RDiff</code> result we obtained, which is the random sampled difference, on the other hand, xobs is the sample difference from the original data. Hence, we arrive that a result where p-value is 0.0002 which is less than the alpha (0.05) and hence we arrive at a result that we reject the null hypothesis and there’s difference in the averaged systolic blood pressure for renters and owners in the participants, and owners tend to have higher average systolic blood pressure than renters.</p>
 </blockquote>
 </div>
 <div id="q2.f" class="section level4">
@@ -933,7 +933,7 @@ R.CI2f &lt;- quantile(Diff2f, c(0.025, 0.975))
 R.CI2f</code></pre>
 <pre><code>##     2.5%    97.5% 
 ## -2.74132  2.75772</code></pre>
-<pre class="r"><code>#calculating the CLT based testing for estimates and p-value
+<pre class="r"><code>#calculating p-value
 robs2f &lt;- Rdt2Sf %&gt;%
   summarise(Diff = mean[1] - mean[2])
 
@@ -941,7 +941,7 @@ pval2f &lt;- sum(Diff2f &gt;= robs2f)/R2f
 pval2f</code></pre>
 <pre><code>## [1] 0</code></pre>
 <blockquote>
-<p>When we filter the sample into male participant aged between 35 and 44 (inclusive), we discovered that the confidence interval is widened compared to the previous result. That we are 95% confident the difference of averaged systolic blood pressure between two groups (Owner and Renter) for male participants aged between 35 and 44 is -2.7413 and 2.7577 mm Hg. On the other hand, the p-value is decreased from 0.0002 to 0. Providing a stronger evidence to reject the null hypothesis, that there is difference on the averaged systolic blood pressure in the renters and owners for male participants aged between 35 and 44. - The reason of the difference in the result may be that the sample size has decreased about a considerable amount due to the restriction.</p>
+<p>When we filter the sample into male participants aged between 35 and 44 (inclusive), we discovered that the confidence interval is widened compared to the previous result. We are 95% confident the difference of average systolic blood pressure between two groups (Owner and Renter) for male participants aged between 35 and 44 is -2.7413 and 2.7577 mm Hg. On the other hand, the p-value is decreased from 0.0002 to 0. Providing a stronger evidence to reject the null hypothesis, that there is difference on the averaged systolic blood pressure in the renters and owners for male participants aged between 35 and 44. - The reason of the difference in the result may be that the sample size has decreased about a considerable amount due to the restriction.</p>
 </blockquote>
 </div>
 </div>

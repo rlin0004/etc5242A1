@@ -436,7 +436,7 @@ R.CIq2
 ```
 
 ```{r 2ep-value}
-#calculating the CLT based testing for estimates and p-value
+#calculating p-value
 robs <- Rdt2S %>%
   summarise(Diff = mean[1] - mean[2])
 
@@ -499,7 +499,7 @@ R.CI2f
 ```
 
 ```{r 2fp-value}
-#calculating the CLT based testing for estimates and p-value
+#calculating p-value
 robs2f <- Rdt2Sf %>%
   summarise(Diff = mean[1] - mean[2])
 
